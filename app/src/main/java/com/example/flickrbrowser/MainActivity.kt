@@ -10,7 +10,7 @@ import android.view.MenuItem
 
 private const val TAG = "MainActivity"
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), GetRawData.OnDownloadComplete {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate called")
@@ -18,6 +18,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
 
+        val getRawData = GetRawData(this)
+        getRawData.execute("")
         Log.d(TAG, "onCreate ends")
     }
 
@@ -39,7 +41,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-//    companion object {
-//        private const val TAG = "MainActivity"
-//    }
+    override fun onDownloadComplete(data: String, status: DownloadStatus) {
+        if (status == DownloadStatus.OK) {
+            Log.d(TAG, "onDownloadComplete called, data is $data")
+        } else {
+            Log.d(TAG, "onDownloadComplete failed with status $status. Error message is: $data")
+        }
+    }
 }
