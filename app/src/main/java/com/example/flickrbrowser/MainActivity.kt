@@ -2,15 +2,13 @@ package com.example.flickrbrowser
 
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.content_main.*
 
@@ -62,7 +60,10 @@ class MainActivity : BaseActivity(), GetRawData.OnDownloadComplete, GetFlickrJso
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
-            R.id.action_settings -> true
+            R.id.action_search -> {
+                startActivity(Intent(this, SearchActivity::class.java))
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -100,5 +101,17 @@ class MainActivity : BaseActivity(), GetRawData.OnDownloadComplete, GetFlickrJso
             intent.putExtra(PHOTO_TRANSFER, photo)
             startActivity(intent)
         }
+    }
+
+    override fun onResume() {
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        val queryResult = sharedPref.getString(FLICKR_QUERY, "")
+
+        if (queryResult != null && queryResult.isNotEmpty()) {
+            val url = createUri("https://api.flickr.com/services/feeds/photos_public.gne", queryResult,"en-us", true)
+            val getRawData = GetRawData(this)
+            getRawData.execute(url)
+        }
+        super.onResume()
     }
 }
