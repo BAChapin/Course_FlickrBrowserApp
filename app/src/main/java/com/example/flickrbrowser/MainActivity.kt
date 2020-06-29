@@ -89,16 +89,16 @@ class MainActivity : BaseActivity(), GetRawData.OnDownloadComplete, GetFlickrJso
 
     override fun onItemClick(view: View, position: Int) {
         Log.d(TAG, "onItemClick called")
+        Toast.makeText(this, "Normal tap at position $position", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onItemLongClick(view: View, position: Int) {
+        Log.d(TAG, "onItemLongClick called")
         val photo = flickrRecyclerViewAdapter.getPhoto(position)
         if (photo != null) {
             val intent = Intent(this, PhotoDetailsActivity::class.java)
             intent.putExtra(PHOTO_TRANSFER, photo)
             startActivity(intent)
         }
-    }
-
-    override fun onItemLongClick(view: View, position: Int) {
-        Log.d(TAG, "onItemLongClick called")
-        Toast.makeText(this, "Long tap at position $position", Toast.LENGTH_SHORT).show()
     }
 }
